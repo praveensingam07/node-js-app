@@ -4,8 +4,6 @@ pipeline {
     environment {
         IMAGE_NAME = "praveensingam07/nodejs-app"
         TAG = "latest"
-        REMOTE_USER = "ubuntu"
-        REMOTE_HOST = "35.154.222.141"
     }
 
     tools {
@@ -17,6 +15,7 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo 'Cloning from GitHub...'
+                //git branch: 'main', credentialsId: 'GitHub', url: 'https://github.com/praveensingam07/node-js-app.git'
                 git branch: 'main', url: 'https://github.com/praveensingam07/node-js-app.git'
             }
         }
@@ -28,7 +27,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run tests'){
             steps {
                 echo 'Running tests...'
                 sh 'npm test || true'
@@ -62,35 +61,23 @@ pipeline {
             }
         }
 
-        stage('Deploy to Remote Server') {
+        stage('Run Container') {
             steps {
-                echo 'Deploying to remote server...'
-
-                sh """
-                ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
-
-                echo "Pulling latest image..."
-                docker pull $IMAGE_NAME:$TAG
-
-                echo "Stopping old container..."
+                echo 'Deploying the latest version of NodeJS application...'
+                sh '''
                 docker stop node-app || true
                 docker rm node-app || true
-
-                echo "Running new container..."
                 docker run -d -p 3000:3000 --name node-app $IMAGE_NAME:$TAG
-
-                EOF
-                """
+                '''
             }
         }
     }
-
     post {
         success {
-            echo 'Pipeline executed successfully! ✔️'
+            echo 'Pipeline executed successfully!'
         }
         failure {
-            echo 'Pipeline failed! ❌'
+            echo 'Pipeline failed!'
         }
     }
 }
