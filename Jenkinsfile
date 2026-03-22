@@ -15,7 +15,8 @@ pipeline {
         stage('Checkout Code') {
             steps {
                 echo 'Cloning from GitHub...'
-                git branch: 'main', credentialsId: 'GitHub', url: 'https://github.com/praveensingam07/node-js-app.git'
+                //git branch: 'main', credentialsId: 'GitHub', url: 'https://github.com/praveensingam07/node-js-app.git'
+                git branch: 'main', url: 'https://github.com/praveensingam07/node-js-app.git'
             }
         }
 
