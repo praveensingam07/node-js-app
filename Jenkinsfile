@@ -56,7 +56,7 @@ pipeline {
         stage('Push to Docker Hub') {
             steps {
                 echo 'Pushing image to Docker Hub...'
-                sh 'docker push $DOCKER_IMAGE:$DOCKER_TAG'
+                sh 'docker push $IMAGE_NAME:$TAG'
             }
         }
 
