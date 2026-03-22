@@ -67,19 +67,17 @@ pipeline {
                 echo 'Deploying to remote server...'
 
                 sh """
-                ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST << EOF
+                ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST '
+                    echo "Pulling latest image..."
+                    docker pull $IMAGE_NAME:$TAG
 
-                echo "Pulling latest image..."
-                docker pull $IMAGE_NAME:$TAG
+                    echo "Stopping old container..."
+                    docker stop node-app || true
+                    docker rm node-app || true
 
-                echo "Stopping old container..."
-                docker stop node-app || true
-                docker rm node-app || true
-
-                echo "Running new container..."
-                docker run -d -p 3000:3000 --name node-app $IMAGE_NAME:$TAG
-
-                EOF
+                    echo "Running new container..."
+                    docker run -d -p 3000:3000 --name node-app $IMAGE_NAME:$TAG
+                '
                 """
             }
         }
