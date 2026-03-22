@@ -73,14 +73,15 @@ pipeline {
                     echo "Pulling latest image version..."
                     docker pull $IMAGE_NAME:$TAG
 
-                    # Backup current container (if exists)
-                    if [ \$(docker ps -a -q -f name=$CONTAINER_NAME) ]; then
-                        echo "Backing up current container..."
-                        docker rename $CONTAINER_NAME $PREV_CONTAINER_NAME
-                    fi
+                    # Stop old container
+                    docker stop $CONTAINER_NAME || true
 
-                    echo "Running new container..."
+                    # Rename for backup (rollback)
+                    docker rename $CONTAINER_NAME $PREV_CONTAINER_NAME || true
+
+                    # Run new container
                     docker run -d -p 3000:3000 --name $CONTAINER_NAME $IMAGE_NAME:$TAG
+
 
                     echo "Waiting 10 seconds for app to start..."
                     sleep 10
@@ -99,7 +100,7 @@ pipeline {
                         exit 1
                     fi
 
-                    # Remove backup if new deployment is successful
+                    # Remove backup if deployment is successful
                     docker rm -f $PREV_CONTAINER_NAME || true
 
                     echo "Deployment successful!"
