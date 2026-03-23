@@ -5,7 +5,7 @@ const app = express();
 const deployedTime = new Date().toLocaleString();
 
 app.get("/", (req, res) => {
-  res.send(`Hello, Node JS Application is deployed via CI/CD Successfully<br>Deployed at: ${deployedTime}`);
+  res.send(`Hello, Node JS Demo Application is deployed via CI/CD Successfully<br>Deployed at: ${deployedTime}`);
 });
 
 const PORT = process.env.PORT || 3000;
